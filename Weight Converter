@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weight Converter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --dark: #2d3436;
+            --light: #f5f6fa;
+            --success: #00b894;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+        
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        
+        .converter-container {
+            background: rgba(255, 255, 255, 0.9);
+            width: 100%;
+            max-width: 500px;
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        
+        .converter-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: var(--primary);
+            margin-bottom: 30px;
+            font-weight: 600;
+            position: relative;
+            display: inline-block;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: var(--secondary);
+            border-radius: 3px;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-weight: 400;
+        }
+        
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid rgba(0,0,0,0.1);
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+            outline: none;
+            background: rgba(255,255,255,0.8);
+        }
+        
+        input:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+        }
+        
+        .result-container {
+            background: rgba(255,255,255,0.7);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.4s ease;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        
+        .result-container.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .result-label {
+            color: var(--dark);
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .result-value {
+            color: var(--primary);
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .unit {
+            color: var(--dark);
+            opacity: 0.7;
+            font-size: 14px;
+        }
+        
+        .animation-container {
+            height: 5px;
+            width: 100%;
+            background: rgba(0,0,0,0.1);
+            border-radius: 5px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            width: 100%;
+            background: var(--success);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 10s linear;
+        }
+        
+        .icon {
+            font-size: 50px;
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        @media (max-width: 600px) {
+            .converter-container {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="converter-container">
+        <div class="icon">⚖️</div>
+        <h1>Weight Converter</h1>
+        
+        <div class="input-group">
+            <label for="pounds">Enter weight in pounds:</label>
+            <input type="number" id="pounds" placeholder="e.g. 150">
+        </div>
+        
+        <div class="result-container" id="resultContainer">
+            <div class="result-label">Your weight in kilograms is:</div>
+            <div class="result-value" id="result">0.00</div>
+            <div class="unit">1 pound = 0.453592 kilograms</div>
+        </div>
+        
+        <div class="animation-container" id="animationContainer">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+    </div>
+
+    <script>
+        const poundsInput = document.getElementById('pounds');
+        const resultElement = document.getElementById('result');
+        const resultContainer = document.getElementById('resultContainer');
+        const progressBar = document.getElementById('progressBar');
+        const animationContainer = document.getElementById('animationContainer');
+        let timeoutId;
+
+        poundsInput.addEventListener('input', function() {
+            // Clear any existing timeout
+            clearTimeout(timeoutId);
+            
+            const pounds = parseFloat(poundsInput.value);
+            
+            if (!isNaN(pounds) && pounds > 0) {
+                const kilograms = pounds * 0.453592;
+                resultElement.textContent = kilograms.toFixed(2);
+                
+                // Show result with animation
+                resultContainer.classList.add('show');
+                animationContainer.style.display = 'block';
+                
+                // Reset and animate progress bar
+                progressBar.style.transform = 'scaleX(0)';
+                setTimeout(() => {
+                    progressBar.style.transform = 'scaleX(1)';
+                }, 50);
+                
+                // Set timeout to clear after 10 seconds
+                timeoutId = setTimeout(() => {
+                    resultContainer.classList.remove('show');
+                    poundsInput.value = '';
+                    animationContainer.style.display = 'none';
+                }, 10000);
+            } else {
+                resultContainer.classList.remove('show');
+                animationContainer.style.display = 'none';
+            }
+        });
+
+        // Focus the input field when page loads
+        poundsInput.focus();
+    </script>
+</body>
+</html>
