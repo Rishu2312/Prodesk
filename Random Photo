@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Photos Feed</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&family=Open+Sans:wght@400;600&display=swap');
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 40px;
+            font-size: 3.5rem;
+            font-family: 'Poppins', sans-serif;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            position: relative;
+            display: inline-block;
+            padding: 0 20px;
+            background: linear-gradient(90deg, #ff8a00, #e52e71);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #ff8a00, #e52e71);
+            border-radius: 2px;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .photo {
+            height: 280px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        .photo:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+        }
+
+        .photo::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.7));
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .photo:hover::before {
+            opacity: 1;
+        }
+
+        .photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .photo:hover img {
+            transform: scale(1.1);
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            background: linear-gradient(45deg, #ff8a00, #e52e71);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #e52e71, #ff8a00);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:hover::before {
+            opacity: 1;
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Floating bubbles background */
+        .bubbles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bubble {
+            position: absolute;
+            bottom: -100px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: rise 15s infinite ease-in;
+        }
+
+        .bubble:nth-child(1) {
+            width: 40px;
+            height: 40px;
+            left: 10%;
+            animation-duration: 8s;
+        }
+
+        .bubble:nth-child(2) {
+            width: 20px;
+            height: 20px;
+            left: 20%;
+            animation-duration: 5s;
+            animation-delay: 1s;
+        }
+
+        .bubble:nth-child(3) {
+            width: 50px;
+            height: 50px;
+            left: 35%;
+            animation-duration: 7s;
+            animation-delay: 2s;
+        }
+
+        .bubble:nth-child(4) {
+            width: 80px;
+            height: 80px;
+            left: 50%;
+            animation-duration: 11s;
+            animation-delay: 0s;
+        }
+
+        .bubble:nth-child(5) {
+            width: 35px;
+            height: 35px;
+            left: 55%;
+            animation-duration: 6s;
+            animation-delay: 1s;
+        }
+
+        .bubble:nth-child(6) {
+            width: 45px;
+            height: 45px;
+            left: 65%;
+            animation-duration: 8s;
+            animation-delay: 3s;
+        }
+
+        .bubble:nth-child(7) {
+            width: 25px;
+            height: 25px;
+            left: 75%;
+            animation-duration: 7s;
+            animation-delay: 2s;
+        }
+
+        .bubble:nth-child(8) {
+            width: 80px;
+            height: 80px;
+            left: 80%;
+            animation-duration: 6s;
+            animation-delay: 1s;
+        }
+
+        @keyframes rise {
+            0% {
+                bottom: -100px;
+                transform: translateX(0);
+            }
+            50% {
+                transform: translateX(100px);
+            }
+            100% {
+                bottom: 1080px;
+                transform: translateX(-200px);
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            .gallery {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating bubbles background -->
+    <div class="bubbles">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
+
+    <div class="container">
+        <div style="text-align: center;">
+            <h1>Random Photos Gallery</h1>
+        </div>
+        
+        <div class="gallery" id="gallery">
+            <!-- Images will be inserted here by JavaScript -->
+        </div>
+        
+        <div class="btn-container">
+            <button class="btn" id="loadMore">Load More Images</button>
+        </div>
+    </div>
+
+    <script>
+        // Function to generate random images from Lorem Picsum
+        function generateRandomImages(count) {
+            const gallery = document.getElementById('gallery');
+            
+            // Clear existing images if it's a refresh
+            if (!event || event.target.id !== 'loadMore') {
+                gallery.innerHTML = '';
+            }
+            
+            for (let i = 0; i < count; i++) {
+                // Generate random width between 400-600 and height between 300-500
+                const width = Math.floor(Math.random() * 200) + 400;
+                const height = Math.floor(Math.random() * 200) + 300;
+                
+                // Create random seed to ensure unique images
+                const seed = Math.floor(Math.random() * 1000);
+                
+                // Use blur parameter for some images to add variety
+                const blur = Math.random() > 0.7 ? Math.floor(Math.random() * 3) + 1 : 0;
+                
+                const imgUrl = `https://picsum.photos/seed/${seed}/${width}/${height}${blur > 0 ? `?blur=${blur}` : ''}`;
+                
+                const photoDiv = document.createElement('div');
+                photoDiv.className = 'photo';
+                
+                const img = document.createElement('img');
+                img.src = imgUrl;
+                img.alt = `Random image ${i + 1}`;
+                img.loading = "lazy";
+                
+                photoDiv.appendChild(img);
+                gallery.appendChild(photoDiv);
+            }
+        }
+        
+        // Initial load
+        document.addEventListener('DOMContentLoaded', function() {
+            generateRandomImages(6);
+        });
+        
+        // Load more images on button click
+        document.getElementById('loadMore').addEventListener('click', function() {
+            generateRandomImages(6);
+        });
+    </script>
+</body>
+</html>
