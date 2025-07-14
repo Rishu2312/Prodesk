@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colorful Background Video</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
+    <link rel="stylesheet" href="background video.css">
+</head>
+<body>
+    <!-- Gradient Overlay -->
+    <div class="color-overlay"></div>
+    
+    <!-- Pre-loader -->
+    <div class="loader">
+        <div class="spinner"></div>
+        <p>Loading colorful experience...</p>
+    </div>
+
+    <!-- Background Video -->
+    <div class="video-container">
+        <video autoplay muted loop id="bg-video">
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-colorful-fluid-animation-1586-large.mp4" type="video/mp4">
+            Your browser does not support HTML5 video.
+        </video>
+        
+        <!-- Content Overlay -->
+        <div class="content">
+            <h1>Colorful World</h1>
+            <p>Immerse yourself in vibrant beauty</p>
+            <button id="video-control" class="btn">
+                <i class="fas fa-pause"></i> Pause Colors
+            </button>
+        </div>
+    </div>
+
+    <!-- Floating Color Bubbles -->
+    <div class="bubbles">
+        <div class="bubble" style="--size: 3rem; --distance: 6rem; --duration: 15s; --delay: 0s;"></div>
+        <div class="bubble" style="--size: 2rem; --distance: 8rem; --duration: 12s; --delay: 2s;"></div>
+        <div class="bubble" style="--size: 4rem; --distance: 7rem; --duration: 18s; --delay: 1s;"></div>
+        <div class="bubble" style="--size: 2.5rem; --distance: 5rem; --duration: 14s; --delay: 3s;"></div>
+    </div>
+
+    <script src="background video.js"></script>
+</body>
+</html>
