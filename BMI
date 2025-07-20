@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMI Calculator</title>
+    <style>
+        :root {
+            --color-1: #ff9a9e;
+            --color-2: #fad0c4;
+            --color-3: #fbc2eb;
+            --color-4: #a6c1ee;
+            --color-5: #84fab0;
+            --color-6: #8fd3f4;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(-45deg, var(--color-1), var(--color-2), var(--color-3), var(--color-4), var(--color-5), var(--color-6));
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            overflow: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 25px;
+            padding: 30px 40px;
+            width: 380px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            z-index: 10;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-top: 0;
+            margin-bottom: 30px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .divider {
+            height: 2px;
+            background: linear-gradient(to right, transparent, rgba(189, 195, 199, 0.6), transparent);
+            margin: 25px 0;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+            color: #2c3e50;
+            transition: all 0.3s;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        input:focus {
+            outline: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s;
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.5);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        button:hover::after {
+            opacity: 1;
+        }
+
+        .result {
+            margin-top: 30px;
+            text-align: center;
+            padding: 25px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.5s ease;
+            opacity: 0;
+            height: 0;
+            overflow: hidden;
+        }
+
+        .result.show {
+            opacity: 1;
+            height: auto;
+            padding: 25px;
+        }
+
+        .bmi-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 15px 0;
+        }
+
+        .condition {
+            font-size: 20px;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: inline-block;
+            margin-top: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .normal {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+        }
+
+        .underweight {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+        }
+
+        .overweight {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+        }
+
+        .obese {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+        }
+
+        .project-info {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 12px;
+            font-size: 14px;
+            color: #34495e;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .project-info h3 {
+            margin-top: 0;
+            color: #2c3e50;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .floating-bubbles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .bubble {
+            position: absolute;
+            bottom: -100px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            animation: floating 15s infinite ease-in;
+        }
+
+        .bubble:nth-child(1) {
+            width: 40px;
+            height: 40px;
+            left: 10%;
+            animation-duration: 16s;
+        }
+
+        .bubble:nth-child(2) {
+            width: 20px;
+            height: 20px;
+            left: 20%;
+            animation-duration: 10s;
+            animation-delay: 1s;
+        }
+
+        .bubble:nth-child(3) {
+            width: 50px;
+            height: 50px;
+            left: 35%;
+            animation-duration: 18s;
+            animation-delay: 2s;
+        }
+
+        .bubble:nth-child(4) {
+            width: 80px;
+            height: 80px;
+            left: 50%;
+            animation-duration: 22s;
+            animation-delay: 0s;
+        }
+
+        .bubble:nth-child(5) {
+            width: 35px;
+            height: 35px;
+            left: 55%;
+            animation-duration: 14s;
+            animation-delay: 1s;
+        }
+
+        .bubble:nth-child(6) {
+            width: 45px;
+            height: 45px;
+            left: 65%;
+            animation-duration: 16s;
+            animation-delay: 3s;
+        }
+
+        .bubble:nth-child(7) {
+            width: 25px;
+            height: 25px;
+            left: 75%;
+            animation-duration: 19s;
+            animation-delay: 2s;
+        }
+
+        .bubble:nth-child(8) {
+            width: 80px;
+            height: 80px;
+            left: 80%;
+            animation-duration: 20s;
+            animation-delay: 1s;
+        }
+
+        .bubble:nth-child(9) {
+            width: 15px;
+            height: 15px;
+            left: 70%;
+            animation-duration: 12s;
+            animation-delay: 0s;
+        }
+
+        .bubble:nth-child(10) {
+            width: 50px;
+            height: 50px;
+            left: 85%;
+            animation-duration: 17s;
+            animation-delay: 4s;
+        }
+
+        @keyframes floating {
+            0% {
+                bottom: -100px;
+                transform: translateX(0);
+            }
+            50% {
+                transform: translateX(100px);
+            }
+            100% {
+                bottom: 1080px;
+                transform: translateX(-200px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                width: 90%;
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-bubbles">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
+
+    <div class="container">
+        <h1>Body Mass Index (BMI) Calculator</h1>
+        
+        
+        <div class="divider"></div>
+        
+        <div class="input-group">
+            <label for="height">Your Height (cm):</label>
+            <input type="number" id="height" placeholder="Enter height in centimeters" value="180">
+        </div>
+        
+        <div class="input-group">
+            <label for="weight">Your Weight (kg):</label>
+            <input type="number" id="weight" placeholder="Enter weight in kilograms" value="80">
+        </div>
+        
+        <button id="calculate">Compute BMI</button>
+        
+        <div class="result" id="result">
+            <div class="bmi-value" id="bmi-value">24.89</div>
+            <div>Weight Condition: <span class="condition" id="condition">Normal weight</span></div>
+        </div>
+        
+        <div class="project-info">
+            <h3>Project Name: BMI Calculator</h3>
+            <p>This project aims to create a body mass index calculator. There are two input fields where the user can enter their height in centimeters and weight in kilograms. By clicking the "compute BMI" button, the BMI will be calculated and displayed along with the weight condition, which is determined by if statements based on the BMI.</p>
+        </div>
+    </div>
+
+    <script>
+        // Dynamic background colors
+        const colors = [
+            ['#ff9a9e', '#fad0c4', '#fbc2eb', '#a6c1ee'],
+            ['#84fab0', '#8fd3f4', '#a6c1ee', '#fbc2eb'],
+            ['#667eea', '#764ba2', '#fbc2eb', '#a6c1ee'],
+            ['#ff758c', '#ff7eb3', '#fbc2eb', '#a6c1ee'],
+            ['#a18cd1', '#fbc2eb', '#84fab0', '#8fd3f4']
+        ];
+
+        let currentColorSet = 0;
+
+        function changeBackgroundColors() {
+            const root = document.documentElement;
+            currentColorSet = (currentColorSet + 1) % colors.length;
+            
+            root.style.setProperty('--color-1', colors[currentColorSet][0]);
+            root.style.setProperty('--color-2', colors[currentColorSet][1]);
+            root.style.setProperty('--color-3', colors[currentColorSet][2]);
+            root.style.setProperty('--color-4', colors[currentColorSet][3]);
+        }
+
+        // Change colors every 10 seconds
+        setInterval(changeBackgroundColors, 10000);
+
+        // BMI Calculation
+        document.getElementById('calculate').addEventListener('click', function() {
+            // Get input values
+            const height = parseFloat(document.getElementById('height').value) / 100; // convert cm to m
+            const weight = parseFloat(document.getElementById('weight').value);
+            
+            if (isNaN(height) || isNaN(weight) || height <= 0 || weight <= 0) {
+                alert('Please enter valid height and weight values');
+                return;
+            }
+            
+            // Calculate BMI
+            const bmi = weight / (height * height);
+            
+            // Display result with animation
+            const resultElement = document.getElementById('result');
+            resultElement.classList.remove('show');
+            
+            // Wait for the hide animation to complete
+            setTimeout(() => {
+                document.getElementById('bmi-value').textContent = bmi.toFixed(2);
+                
+                // Determine weight condition
+                let condition = '';
+                let conditionClass = '';
+                
+                if (bmi < 18.5) {
+                    condition = 'Underweight';
+                    conditionClass = 'underweight';
+                } else if (bmi >= 18.5 && bmi < 25) {
+                    condition = 'Normal weight';
+                    conditionClass = 'normal';
+                } else if (bmi >= 25 && bmi < 30) {
+                    condition = 'Overweight';
+                    conditionClass = 'overweight';
+                } else {
+                    condition = 'Obese';
+                    conditionClass = 'obese';
+                }
+                
+                document.getElementById('condition').textContent = condition;
+                document.getElementById('condition').className = 'condition ' + conditionClass;
+                
+                // Show result with animation
+                resultElement.classList.add('show');
+            }, 300);
+        });
+
+        // Initial calculation on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('calculate').click();
+        });
+    </script>
+</body>
+</html>
